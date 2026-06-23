@@ -1,0 +1,4 @@
+# Test-/Tooling-Artefakte
+.playwright-mcp/
+/*.png
+.DS_Store

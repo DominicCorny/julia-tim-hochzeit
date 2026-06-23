@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#b03052" />
+  <title>Julia &amp; Tim – Das Hochzeitsrätsel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- ====================== START ====================== -->
+    <section id="screen-start" class="screen active">
+      <h1 class="names">Julia <span class="amp">&amp;</span> Tim</h1>
+      <p class="subtitle">Ein kleines Rätsel zu eurer Hochzeit</p>
+      <div class="divider"></div>
+      <div class="intro-card">
+        <div class="emoji-row">💍 ⚽ 🎿 🍳</div>
+        <p>Liebe Julia, lieber Tim –<br />euer Geschenk ist sicher verwahrt.</p>
+        <p>Meistert <b>vier kleine Spiele</b>. Jeder Sieg verrät euch <b>eine Ziffer</b> des Codes für die Cryptex.</p>
+        <p style="font-size:1rem; opacity:0.8;">Vier Ziffern, ein Schloss – ihr schafft das gemeinsam! ❤️</p>
+      </div>
+      <button class="btn" id="btn-start">Los geht's</button>
+    </section>
+
+    <!-- ====================== HUB / ÜBERSICHT ====================== -->
+    <section id="screen-hub" class="screen">
+      <h1 class="names" style="font-size: clamp(2rem, 9vw, 2.6rem); margin-top:0;">Eure Spiele</h1>
+      <p class="subtitle" style="margin-bottom:6px;">Tippt ein Spiel an – jeder Sieg = eine Ziffer</p>
+      <div class="code-strip" id="code-strip"><!-- Mini-Code-Anzeige --></div>
+      <div class="hub-grid" id="hub-grid"><!-- Spiel-Kacheln --></div>
+      <button class="btn gold reveal-btn" id="btn-reveal" hidden>🔓 Code enthüllen</button>
+      <p class="reset-link" id="reset-link">Fortschritt zurücksetzen</p>
+    </section>
+
+    <!-- ====================== EINZEL-SPIEL ====================== -->
+    <section id="screen-game" class="screen">
+      <div class="game-bar">
+        <button class="back-btn" id="btn-back">‹ Übersicht</button>
+        <span class="game-title" id="game-title"></span>
+        <span class="game-bar-spacer"></span>
+      </div>
+      <div id="game-root" class="game-root"><!-- Spiel wird hier eingehängt --></div>
+    </section>
+
+    <!-- ====================== FINALE / CODE ====================== -->
+    <section id="screen-final" class="screen">
+      <div class="emoji-row" style="font-size:2.2rem;">🎉 💍 🎉</div>
+      <h1 class="win-title">Geschafft!</h1>
+      <p class="win-text">Ihr habt alle vier Spiele gemeistert –<br />Glückwunsch, ihr Zwei!</p>
+      <p class="code-label">Euer Code für die Cryptex</p>
+      <div class="code-boxes" id="code-boxes"></div>
+      <p class="cryptex-hint">
+        <span class="lock">🔒</span> Stellt diese vier Ziffern an der Cryptex ein,<br />um euer Geschenk zu befreien.
+      </p>
+      <button class="btn" id="btn-final-back">Zurück zu den Spielen</button>
+    </section>
+
+    <p class="footer">Mit ❤️ gebaut für Julia &amp; Tim</p>
+  </div>
+
+  <!-- Overlay für Einzel-Sieg (eine Ziffer freigeschaltet) -->
+  <div id="overlay" class="overlay" hidden>
+    <div class="overlay-card">
+      <div class="overlay-emoji" id="overlay-emoji">🎉</div>
+      <h2 class="overlay-title" id="overlay-title">Gewonnen!</h2>
+      <p class="overlay-sub" id="overlay-sub">Ihr habt eine Ziffer freigeschaltet:</p>
+      <div class="overlay-digit" id="overlay-digit">?</div>
+      <button class="btn" id="overlay-continue">Weiter</button>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <!-- Spiele registrieren sich in window.Games, danach orchestriert main.js -->
+  <script src="js/games/penalty.js"></script>
+  <script src="js/games/ski.js"></script>
+  <script src="js/games/cooking.js"></script>
+  <script src="js/games/polter.js"></script>
+  <script src="js/games/rhythm.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
