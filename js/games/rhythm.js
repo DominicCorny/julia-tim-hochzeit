@@ -81,7 +81,7 @@ window.Games.rhythm = {
       '<canvas class="game-canvas" width="' + W + '" height="' + H + '"></canvas>' +
       '<p class="game-instructions">Tippe jeden Kreis, wenn er <b>grün</b> wird – das ganze Lied lang!</p>';
     const canvas = root.querySelector(".game-canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = window.JT.setupCanvas(canvas, W, H);
     const hitsEl = root.querySelector(".r-hits");
     root.querySelector(".r-mode").textContent = audio ? "🎶" : "🔊 Testmodus";
 

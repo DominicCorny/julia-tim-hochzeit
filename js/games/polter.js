@@ -18,7 +18,7 @@ window.Games.polter = {
       '<canvas class="game-canvas" width="' + W + '" height="' + H + '"></canvas>' +
       '<p class="game-instructions">Tippt das fliegende Geschirr an, bevor es runterfällt!</p>';
     const canvas = root.querySelector(".game-canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = window.JT.setupCanvas(canvas, W, H);
     const countEl = root.querySelector(".po-count");
 
     let dishes = [], shards = [];

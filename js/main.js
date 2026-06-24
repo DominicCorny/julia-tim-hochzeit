@@ -51,12 +51,24 @@ const BONUS_GAMES = [];
 
   // ---- Gemeinsame Helfer für die Spiele (window.JT) --------------
   window.JT = {
-    // Zeiger-Position in Canvas-Koordinaten umrechnen
+    // Canvas in HiDPI einrichten: interne Auflösung = logisch × devicePixelRatio,
+    // gezeichnet wird weiterhin in logischen Einheiten (scharf auf Handys).
+    setupCanvas: function (canvas, logicalW, logicalH) {
+      const dpr = Math.min(window.devicePixelRatio || 1, 3);
+      canvas.width = Math.round(logicalW * dpr);
+      canvas.height = Math.round(logicalH * dpr);
+      const ctx = canvas.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas._lw = logicalW; canvas._lh = logicalH;
+      return ctx;
+    },
+    // Zeiger-Position in logische Canvas-Koordinaten umrechnen
     pos: function (canvas, evt) {
       const r = canvas.getBoundingClientRect();
+      const lw = canvas._lw || canvas.width, lh = canvas._lh || canvas.height;
       return {
-        x: (evt.clientX - r.left) * (canvas.width / r.width),
-        y: (evt.clientY - r.top) * (canvas.height / r.height),
+        x: (evt.clientX - r.left) * (lw / r.width),
+        y: (evt.clientY - r.top) * (lh / r.height),
       };
     },
     confetti: launchConfetti,

@@ -24,7 +24,7 @@ window.Games.ski = {
       '<p class="game-instructions">Ratschings runter bis zur <b>Rinderalm</b> – Bäumen ausweichen, ' +
       '<b>Bombardino</b> gibt Kraft! 🍹</p>';
     const canvas = root.querySelector(".game-canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = window.JT.setupCanvas(canvas, W, H);
     const livesEl = root.querySelector(".s-lives");
     const metersEl = root.querySelector(".s-meters");
 
@@ -39,10 +39,10 @@ window.Games.ski = {
     // Fotos: Skilift (Start) + Rinderalm (Sieg)
     const liftImg = new Image(); let liftReady = false;
     liftImg.onload = function () { liftReady = true; };
-    liftImg.src = "assets/Bilder/ski-lift.jpg";
+    liftImg.src = "assets/Bilder/lift.jpg";
     const huetteImg = new Image(); let huetteReady = false;
     huetteImg.onload = function () { huetteReady = true; };
-    huetteImg.src = "assets/Bilder/ski-huette.jpg";
+    huetteImg.src = "assets/Bilder/huette.jpg";
 
     for (let i = 0; i < 40; i++) dots.push({ x: Math.random() * W, y: Math.random() * H, s: 0.5 + Math.random() });
 

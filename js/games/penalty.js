@@ -22,7 +22,7 @@ window.Games.penalty = {
       '<canvas class="game-canvas" width="' + W + '" height="' + H + '"></canvas>' +
       '<p class="game-instructions">Wisch über den Ball Richtung Tor – ziele in die Ecken!</p>';
     const canvas = root.querySelector(".game-canvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = window.JT.setupCanvas(canvas, W, H);
     const goalsEl = root.querySelector(".p-goals");
     const msgEl = root.querySelector(".p-msg");
 
@@ -41,7 +41,7 @@ window.Games.penalty = {
     const keeperImg = new Image();
     let keeperReady = false;
     keeperImg.onload = function () { keeperReady = true; };
-    keeperImg.src = "assets/Bilder/julia-keeper.png";
+    keeperImg.src = "assets/Bilder/keeper.png";
 
     const inGoalRange = x => Math.max(GOAL.left + 12, Math.min(GOAL.right - 12, x));
 
@@ -193,9 +193,15 @@ window.Games.penalty = {
     }
     function drawKeeper(x, y) {
       if (keeperReady) {
-        // Julia-Comic, Füße knapp auf der Torlinie, Höhe etwas größer als das Tor
-        const h = 104, w = h * keeperImg.width / keeperImg.height;
-        ctx.drawImage(keeperImg, x - w / 2, GOAL.line + 12 - h, w, h);
+        // Julia-Comic, steht leicht vor der Torlinie; weicher Schatten hebt sie vom Netz ab
+        const h = 112, w = h * keeperImg.width / keeperImg.height;
+        ctx.save();
+        ctx.shadowColor = "rgba(0,0,0,0.38)";
+        ctx.shadowBlur = 9;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 3;
+        ctx.drawImage(keeperImg, x - w / 2, GOAL.line + 14 - h, w, h);
+        ctx.restore();
         return;
       }
       // Fallback (gezeichnet), falls Bild noch nicht geladen
