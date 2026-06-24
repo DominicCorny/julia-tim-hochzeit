@@ -34,14 +34,22 @@ window.Games.ski = {
     let dots = [];
     let traveled = 0, speed = 200, lives = 3, invuln = 0;
     let spawnTimer = 0, signTimer = 1.0, signIdx = 0, signSide = 1, liftOffset = 0, flash = "";
-    let raf = null, last = 0, finished = false, won = false;
+    let raf = null, last = 0, finished = false, won = false, started = false;
+
+    // Fotos: Skilift (Start) + Rinderalm (Sieg)
+    const liftImg = new Image(); let liftReady = false;
+    liftImg.onload = function () { liftReady = true; };
+    liftImg.src = "assets/Bilder/ski-lift.jpg";
+    const huetteImg = new Image(); let huetteReady = false;
+    huetteImg.onload = function () { huetteReady = true; };
+    huetteImg.src = "assets/Bilder/ski-huette.jpg";
 
     for (let i = 0; i < 40; i++) dots.push({ x: Math.random() * W, y: Math.random() * H, s: 0.5 + Math.random() });
 
     // --- Steuerung ---
     let dragging = false;
     function setTarget(e) { const p = window.JT.pos(canvas, e); skier.target = Math.max(22, Math.min(W - 22, p.x)); }
-    function down(e) { dragging = true; setTarget(e); e.preventDefault(); }
+    function down(e) { e.preventDefault(); if (!started) { started = true; return; } dragging = true; setTarget(e); }
     function move(e) { if (dragging) { setTarget(e); e.preventDefault(); } }
     function upx() { dragging = false; }
     canvas.addEventListener("pointerdown", down);
@@ -52,6 +60,7 @@ window.Games.ski = {
     function updateLives() { livesEl.textContent = "❤️".repeat(lives) + "🤍".repeat(Math.max(0, 3 - lives)); }
 
     function update(dt) {
+      if (!started) return;       // wartet auf Tap im Start-Screen
       const frac = traveled / GOAL_DIST;
       speed = 200 + frac * 170;
       traveled += speed * dt;
@@ -120,8 +129,34 @@ window.Games.ski = {
       setTimeout(onWin, 5000); // Alm-Nachricht mind. 5 s lesbar lassen
     }
 
+    // Bild bildschirmfüllend einpassen (Cover, mittig beschnitten)
+    function drawImageCover(img, dx, dy, dw, dh) {
+      const ir = img.width / img.height, dr = dw / dh;
+      let sw, sh, sx, sy;
+      if (ir > dr) { sh = img.height; sw = sh * dr; sx = (img.width - sw) / 2; sy = 0; }
+      else { sw = img.width; sh = sw / dr; sx = 0; sy = (img.height - sh) / 2; }
+      ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+
+    // Start-Screen mit Skilift-Foto
+    function drawStart() {
+      ctx.fillStyle = "#0d1b2a"; ctx.fillRect(0, 0, W, H);
+      if (liftReady) drawImageCover(liftImg, 0, 0, W, H);
+      const g = ctx.createLinearGradient(0, H - 210, 0, H);
+      g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,0.78)");
+      ctx.fillStyle = g; ctx.fillRect(0, H - 210, W, 210);
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 19px -apple-system, Segoe UI, Roboto, sans-serif";
+      ctx.fillText("🚡 Rein in den Rinderexpress!", 180, H - 110);
+      ctx.fillStyle = "#ffe08a";
+      ctx.font = "600 16px -apple-system, Segoe UI, Roboto, sans-serif";
+      ctx.fillText("Tippen zum Starten", 180, H - 78);
+    }
+
     // --- Zeichnen ---
     function draw() {
+      if (!started) { drawStart(); return; }
       const g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, "#dff1ff"); g.addColorStop(1, "#ffffff");
       ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
@@ -221,14 +256,29 @@ window.Games.ski = {
     }
 
     function drawHut() {
-      draw();
-      ctx.font = "80px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText("🛖", 180, 240);
-      ctx.font = "700 26px -apple-system, Segoe UI, Roboto, sans-serif";
-      ctx.fillStyle = "#1f7a3a";
-      ctx.fillText("Rinderalm erreicht! 🎉", 180, 320);
-      ctx.font = "600 15px Georgia, serif"; ctx.fillStyle = "#a8841a";
-      ctx.fillText("Zeit für einen Bombardino! 🍹", 180, 352);
+      ctx.fillStyle = "#0d1b2a"; ctx.fillRect(0, 0, W, H);
+      if (huetteReady) {
+        drawImageCover(huetteImg, 0, 0, W, H);
+      } else {
+        const g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, "#dff1ff"); g.addColorStop(1, "#ffffff");
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        ctx.font = "80px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("🛖", 180, 250);
+      }
+      // dunkle Bänder für lesbaren Text
+      const gt = ctx.createLinearGradient(0, 0, 0, 120);
+      gt.addColorStop(0, "rgba(0,0,0,0.72)"); gt.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = gt; ctx.fillRect(0, 0, W, 120);
+      const gb = ctx.createLinearGradient(0, H - 150, 0, H);
+      gb.addColorStop(0, "rgba(0,0,0,0)"); gb.addColorStop(1, "rgba(0,0,0,0.8)");
+      ctx.fillStyle = gb; ctx.fillRect(0, H - 150, W, 150);
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.font = "700 25px -apple-system, Segoe UI, Roboto, sans-serif";
+      ctx.fillStyle = "#fff";
+      ctx.fillText("Rinderalm erreicht! 🎉", 180, 48);
+      ctx.font = "600 16px Georgia, serif"; ctx.fillStyle = "#ffe08a";
+      ctx.fillText("Zeit für einen Bombardino! 🍹", 180, H - 55);
     }
 
     let flashTimer = 0;

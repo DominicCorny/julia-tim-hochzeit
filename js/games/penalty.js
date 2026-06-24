@@ -37,6 +37,12 @@ window.Games.penalty = {
     let aim = null;             // {sx,sy,cx,cy} während Wischen
     let raf = null, last = 0, finished = false;
 
+    // Julia als Torfrau (Comic, transparent)
+    const keeperImg = new Image();
+    let keeperReady = false;
+    keeperImg.onload = function () { keeperReady = true; };
+    keeperImg.src = "assets/Bilder/julia-keeper.png";
+
     const inGoalRange = x => Math.max(GOAL.left + 12, Math.min(GOAL.right - 12, x));
 
     // --- Eingabe (Wischen) ---
@@ -186,18 +192,20 @@ window.Games.penalty = {
       }
     }
     function drawKeeper(x, y) {
+      if (keeperReady) {
+        // Julia-Comic, Füße knapp auf der Torlinie, Höhe etwas größer als das Tor
+        const h = 104, w = h * keeperImg.width / keeperImg.height;
+        ctx.drawImage(keeperImg, x - w / 2, GOAL.line + 12 - h, w, h);
+        return;
+      }
+      // Fallback (gezeichnet), falls Bild noch nicht geladen
       ctx.save();
       ctx.translate(x, y);
-      // Körper (Trikot)
-      ctx.fillStyle = "#b03052";
-      ctx.fillRect(-18, 4, 36, 34);
-      // Kopf
+      ctx.fillStyle = "#b03052"; ctx.fillRect(-18, 4, 36, 34);
       ctx.fillStyle = "#f3c9a8";
       ctx.beginPath(); ctx.arc(0, -6, 11, 0, Math.PI * 2); ctx.fill();
-      // Haare
       ctx.fillStyle = "#6b4423";
       ctx.beginPath(); ctx.arc(0, -8, 11, Math.PI, 0); ctx.fill();
-      // Handschuhe
       ctx.fillStyle = "#e8d28a";
       ctx.beginPath(); ctx.arc(-24, 14, 7, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.arc(24, 14, 7, 0, Math.PI * 2); ctx.fill();
