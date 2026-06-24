@@ -85,6 +85,15 @@ window.Games.rhythm = {
     const hitsEl = root.querySelector(".r-hits");
     root.querySelector(".r-mode").textContent = audio ? "🎶" : "🔊 Testmodus";
 
+    // Oberer „DS-Bildschirm": Video in Dauerschleife (stumm)
+    const TOP_H = 210; // ~oberes Drittel
+    const vid = document.createElement("video");
+    vid.src = "assets/Bilder/highSchoolMusicalVideo.mp4";
+    vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = "auto";
+    vid.setAttribute("muted", ""); vid.setAttribute("playsinline", "");
+    function playVid() { try { const p = vid.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    playVid();
+
     let audioCtx = null;
     let circles = [];     // {x,y,r,beat,ticked}
     let stars = [];       // Partikel
@@ -177,6 +186,7 @@ window.Games.rhythm = {
     // --- Eingabe ---
     function onDown(e) {
       e.preventDefault();
+      playVid(); // Video nach User-Geste sicher starten (iOS)
       if (phase === "idle") { beginStart(); return; }
       if (phase === "analyzing") return;
       if (phase === "done") { if (!won) goPlaying(); return; } // verloren -> nochmal
@@ -209,10 +219,10 @@ window.Games.rhythm = {
     }
 
     function spawnPos() {
-      let x = 60, y = 110;
+      let x = 60, y = TOP_H + 60;
       for (let t = 0; t < 12; t++) {
         x = 50 + Math.random() * (W - 100);
-        y = 90 + Math.random() * (H - 170);
+        y = (TOP_H + 34) + Math.random() * (H - TOP_H - 80); // nur unterer Bereich
         let ok = true;
         for (const c of circles) if (Math.hypot(c.x - x, c.y - y) < 74) { ok = false; break; }
         if (ok) break;
@@ -264,77 +274,91 @@ window.Games.rhythm = {
       return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * t) + "," + Math.round(a[1] + (b[1] - a[1]) * t) + "," + Math.round(a[2] + (b[2] - a[2]) * t) + ")";
     }
     function drawScene(cnow) {
-      const g = ctx.createLinearGradient(0, 0, 0, H);
+      // --- Unterer Bildschirm: Spiel-Hintergrund ---
+      const g = ctx.createLinearGradient(0, TOP_H, 0, H);
       g.addColorStop(0, "#241a3a"); g.addColorStop(1, "#3a2350");
-      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = g; ctx.fillRect(0, TOP_H, W, H - TOP_H);
       ctx.fillStyle = "rgba(255,255,255,0.10)";
-      for (let i = 0; i < 26; i++) { const sx = (i * 73) % W, sy = (i * 131) % H; ctx.fillRect(sx, sy, 2, 2); }
+      for (let i = 0; i < 22; i++) { const sx = (i * 73) % W, sy = TOP_H + ((i * 131) % (H - TOP_H)); ctx.fillRect(sx, sy, 2, 2); }
+
+      // Spielinhalt auf den unteren Bereich begrenzen
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, TOP_H, W, H - TOP_H); ctx.clip();
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
       if (phase === "idle") {
-        ctx.font = "60px sans-serif"; ctx.fillText("🎵", 180, 222);
+        ctx.font = "54px sans-serif"; ctx.fillText("🎵", 180, 300);
         ctx.font = "700 22px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = "#ffe08a"; ctx.fillText("Tippen zum Starten", 180, 292);
+        ctx.fillStyle = "#ffe08a"; ctx.fillText("Tippen zum Starten", 180, 360);
         ctx.font = "15px -apple-system, Segoe UI, Roboto, sans-serif";
         ctx.fillStyle = "rgba(255,255,255,0.7)";
-        ctx.fillText(audio ? "(euer Song – das ganze Lied!)" : "(Testmodus: Klick-Track)", 180, 322);
-        // Hinweis: Ton einschalten (am Handy oft stumm)
+        ctx.fillText(audio ? "(euer Song – das ganze Lied!)" : "(Testmodus: Klick-Track)", 180, 392);
         ctx.font = "700 18px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = "#ffd54a";
-        ctx.fillText("🔊 Ton am Handy einschalten!", 180, 374);
-        return;
-      }
-      if (phase === "analyzing") {
-        ctx.font = "54px sans-serif"; ctx.fillText("🎧", 180, 250);
+        ctx.fillStyle = "#ffd54a"; ctx.fillText("🔊 Ton am Handy einschalten!", 180, 442);
+      } else if (phase === "analyzing") {
+        ctx.font = "48px sans-serif"; ctx.fillText("🎧", 180, 360);
         ctx.font = "700 20px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = "#ffe08a"; ctx.fillText("Analysiere Song …", 180, 320);
-        return;
-      }
-      if (phase === "done") {
-        ctx.font = "60px sans-serif"; ctx.fillText(won ? "🎉" : "🎵", 180, 210);
+        ctx.fillStyle = "#ffe08a"; ctx.fillText("Analysiere Song …", 180, 420);
+      } else if (phase === "done") {
+        ctx.font = "52px sans-serif"; ctx.fillText(won ? "🎉" : "🎵", 180, 300);
         ctx.font = "800 46px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = won ? "#27c93f" : "#ffe08a";
-        ctx.fillText(pct + "%", 180, 285);
+        ctx.fillStyle = won ? "#27c93f" : "#ffe08a"; ctx.fillText(pct + "%", 180, 372);
         ctx.font = "600 17px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = "rgba(255,255,255,0.85)";
-        ctx.fillText(hits + " von " + spawned + " getroffen", 180, 325);
-        ctx.font = "700 20px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = "#ffe08a";
-        ctx.fillText(won ? "Gewonnen! ⭐" : "Ziel: 80 % – tippen für nochmal", 180, 375);
-        return;
-      }
+        ctx.fillStyle = "rgba(255,255,255,0.85)"; ctx.fillText(hits + " von " + spawned + " getroffen", 180, 412);
+        ctx.font = "700 19px -apple-system, Segoe UI, Roboto, sans-serif";
+        ctx.fillStyle = "#ffe08a"; ctx.fillText(won ? "Gewonnen! ⭐" : "Ziel: 80 % – tippen für nochmal", 180, 458);
+      } else {
+        // playing: Fortschrittsbalken + Kreise + Sterne
+        const prog = beatmap.length ? Math.min(1, spawnIdx / beatmap.length) : 0;
+        ctx.fillStyle = "rgba(255,255,255,0.15)"; ctx.fillRect(30, TOP_H + 12, W - 60, 6);
+        ctx.fillStyle = "#ffd54a"; ctx.fillRect(30, TOP_H + 12, (W - 60) * prog, 6);
 
-      // Fortschrittsbalken (Songposition über die Beats)
-      const prog = beatmap.length ? Math.min(1, spawnIdx / beatmap.length) : 0;
-      ctx.fillStyle = "rgba(255,255,255,0.15)"; ctx.fillRect(30, 14, W - 60, 6);
-      ctx.fillStyle = "#ffd54a"; ctx.fillRect(30, 14, (W - 60) * prog, 6);
-
-      for (const c of circles) {
-        const p = Math.max(0, Math.min(1, (cnow - (c.beat - C.lead)) / C.lead));
-        const ready = Math.abs(cnow - c.beat) <= C.hitWindow;
-        let alpha = 1;
-        if (cnow > c.beat + C.hitWindow) alpha = Math.max(0, 1 - (cnow - (c.beat + C.hitWindow)) / C.fade);
-        ctx.globalAlpha = alpha;
-        if (!ready && cnow < c.beat) {
-          ctx.strokeStyle = "rgba(255,255,255,0.55)"; ctx.lineWidth = 3;
-          ctx.beginPath(); ctx.arc(c.x, c.y, c.r + (1 - p) * 42, 0, Math.PI * 2); ctx.stroke();
+        for (const c of circles) {
+          const p = Math.max(0, Math.min(1, (cnow - (c.beat - C.lead)) / C.lead));
+          const ready = Math.abs(cnow - c.beat) <= C.hitWindow;
+          let alpha = 1;
+          if (cnow > c.beat + C.hitWindow) alpha = Math.max(0, 1 - (cnow - (c.beat + C.hitWindow)) / C.fade);
+          ctx.globalAlpha = alpha;
+          if (!ready && cnow < c.beat) {
+            ctx.strokeStyle = "rgba(255,255,255,0.55)"; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.arc(c.x, c.y, c.r + (1 - p) * 42, 0, Math.PI * 2); ctx.stroke();
+          }
+          ctx.fillStyle = lerpCol(DARK, GREEN, p);
+          ctx.beginPath(); ctx.arc(c.x, c.y, c.r + (ready ? 3 : 0), 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = ready ? "#eafff0" : "rgba(0,0,0,0.25)";
+          ctx.lineWidth = ready ? 4 : 2;
+          ctx.beginPath(); ctx.arc(c.x, c.y, c.r + (ready ? 3 : 0), 0, Math.PI * 2); ctx.stroke();
+          ctx.globalAlpha = 1;
         }
-        ctx.fillStyle = lerpCol(DARK, GREEN, p);
-        ctx.beginPath(); ctx.arc(c.x, c.y, c.r + (ready ? 3 : 0), 0, Math.PI * 2); ctx.fill();
-        ctx.strokeStyle = ready ? "#eafff0" : "rgba(0,0,0,0.25)";
-        ctx.lineWidth = ready ? 4 : 2;
-        ctx.beginPath(); ctx.arc(c.x, c.y, c.r + (ready ? 3 : 0), 0, Math.PI * 2); ctx.stroke();
+        for (const s of stars) {
+          ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
+          ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.4));
+          if (s.big) { ctx.font = (s.size) + "px sans-serif"; ctx.fillText("⭐", 0, 0); }
+          else drawStar(s.size);
+          ctx.restore();
+        }
         ctx.globalAlpha = 1;
       }
+      ctx.restore();
 
-      for (const s of stars) {
-        ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(s.rot);
-        ctx.globalAlpha = Math.max(0, Math.min(1, s.life * 1.4));
-        if (s.big) { ctx.font = (s.size) + "px sans-serif"; ctx.fillText("⭐", 0, 0); }
-        else drawStar(s.size);
-        ctx.restore();
+      // --- Oberer Bildschirm: Video (Dauerschleife) ---
+      drawTopScreen();
+      ctx.fillStyle = "#0b0b14"; ctx.fillRect(0, TOP_H - 3, W, 5); // DS-Trennlinie
+    }
+    function drawTopScreen() {
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, W, TOP_H);
+      if (vid.readyState >= 2 && vid.videoWidth) {
+        const ir = vid.videoWidth / vid.videoHeight, dr = W / TOP_H;
+        let sw, sh, sx, sy;
+        if (ir > dr) { sh = vid.videoHeight; sw = sh * dr; sx = (vid.videoWidth - sw) / 2; sy = 0; }
+        else { sw = vid.videoWidth; sh = sw / dr; sx = 0; sy = (vid.videoHeight - sh) / 2; }
+        try { ctx.drawImage(vid, sx, sy, sw, sh, 0, 0, W, TOP_H); } catch (e) {}
+      } else {
+        ctx.fillStyle = "#1a1030"; ctx.fillRect(0, 0, W, TOP_H);
+        ctx.fillStyle = "#ffe08a"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.font = "700 17px -apple-system, Segoe UI, Roboto, sans-serif";
+        ctx.fillText("🎬 High School Musical", 180, TOP_H / 2);
       }
-      ctx.globalAlpha = 1;
     }
     function drawStar(size) {
       ctx.fillStyle = "#ffd54a";
@@ -364,6 +388,7 @@ window.Games.rhythm = {
       canvas.removeEventListener("pointerdown", onDown);
       if (audio) { try { audio.pause(); audio.src = ""; } catch (e) {} }
       if (audioCtx) { try { audioCtx.close(); } catch (e) {} }
+      try { vid.pause(); vid.removeAttribute("src"); vid.load(); } catch (e) {}
     };
   },
 };

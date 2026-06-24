@@ -6,3 +6,5 @@
 # große Bild-Originale (nur die konvertierten Web-Bilder kommen ins Repo)
 assets/Bilder/*.HEIC
 assets/Bilder/Gemini_Generated_Image_*.png
+
+assets/Bilder/highSchoolMusicalDS.png
