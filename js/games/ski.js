@@ -15,7 +15,10 @@ window.Games.ski = {
     const GOAL_DIST = 10500;    // zurückzulegende Strecke (50% länger)
     const TOTAL_M = 1200;       // Anzeige in "Metern"
     const SKIER_Y = 470;
-    const SIGN_TEXTS = ["Rinneralm", "Enzian", "Rinderexpress", "Ratschings", "Rinderalm 2 km"];
+    const SIGN_TEXTS = [
+      "Saxner", "Kalcheralm", "Saxnerhütte", "Waldhütte", "Ratschingser Stub'n",
+      "Skistodl", "Enzian", "Rinderexpress", "Ratschings", "Rinderalm 2 km",
+    ];
 
     root.innerHTML =
       '<div class="game-hud"><span class="s-lives">❤️❤️❤️</span>' +
@@ -280,13 +283,15 @@ window.Games.ski = {
 
     function drawSign(s) {
       ctx.save();
-      ctx.translate(s.x, s.y);
-      ctx.fillStyle = "rgba(138,90,43,0.9)"; ctx.fillRect(-2, 0, 4, 26);
+      ctx.translate(0, s.y);
       ctx.font = "700 11px -apple-system, Segoe UI, Roboto, sans-serif";
       const w = ctx.measureText(s.text).width + 14;
-      ctx.fillStyle = "rgba(31,109,192,0.92)"; ctx.fillRect(-w / 2, -16, w, 18);
+      // rechtsbündig am rechten Rand -> auch lange Namen bleiben sichtbar
+      const right = W - 10, left = right - w, cx = (left + right) / 2;
+      ctx.fillStyle = "rgba(138,90,43,0.9)"; ctx.fillRect(cx - 2, 0, 4, 26);     // Pfosten
+      ctx.fillStyle = "rgba(31,109,192,0.92)"; ctx.fillRect(left, -16, w, 18);   // Schild
       ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText(s.text, 0, -7);
+      ctx.fillText(s.text, cx, -7);
       ctx.restore();
     }
 
