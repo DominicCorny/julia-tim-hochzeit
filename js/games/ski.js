@@ -39,7 +39,7 @@ window.Games.ski = {
     // Fotos: Skilift (Start) + Rinderalm (Sieg)
     const liftImg = new Image(); let liftReady = false;
     liftImg.onload = function () { liftReady = true; };
-    liftImg.src = "assets/Bilder/lift.jpg";
+    liftImg.src = "assets/Bilder/lift2.jpg";
     const huetteImg = new Image(); let huetteReady = false;
     huetteImg.onload = function () { huetteReady = true; };
     huetteImg.src = "assets/Bilder/huette.jpg";
