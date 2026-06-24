@@ -52,10 +52,24 @@ window.Games.penalty = {
     let tim = { x: TIM_IDLE_X };
     let pendingToX = 180, runup = null;
 
+    // Stadion-Sounds (Mixkit, royalty-free)
+    function mkAudio(src, vol, loop) { const a = new Audio(src); a.volume = vol; a.loop = !!loop; a.preload = "auto"; return a; }
+    const sndAmbient = mkAudio("assets/audio/stadion-ambient.mp3", 0.32, true); // volles Stadion, Dauerschleife
+    const sndGoal = mkAudio("assets/audio/tor-jubel.mp3", 0.9, false);          // Torjubel
+    const sndSave = mkAudio("assets/audio/gehalten-ooh.mp3", 0.7, false);       // "Ooohh" beim Halten
+    let ambientStarted = false;
+    function startAmbient() { if (ambientStarted) return; ambientStarted = true; try { const p = sndAmbient.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    function playSfx(a, vol, maxMs) {
+      try { if (a._t) clearTimeout(a._t); a.currentTime = 0; a.volume = vol; const p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+      if (maxMs) a._t = setTimeout(function () { try { a.pause(); } catch (e) {} }, maxMs);
+    }
+    startAmbient(); // mount läuft im Tap-Kontext (Kachel-Klick) -> Audio erlaubt
+
     const inGoalRange = x => Math.max(GOAL.left + 12, Math.min(GOAL.right - 12, x));
 
     // --- Eingabe (Wischen) ---
     function down(e) {
+      startAmbient(); // Stadion-Ambiente nach erster Berührung (iOS-sicher)
       if (state !== "aim") return;
       const p = window.JT.pos(canvas, e);
       aim = { sx: p.x, sy: p.y, cx: p.x, cy: p.y };
@@ -129,10 +143,12 @@ window.Games.penalty = {
       const saved = Math.abs(ball.x - keeper.x) < (keeper.w / 2 + ball.r + 2);
       if (saved) {
         resultText = "Julia hält! 🧤";
+        playSfx(sndSave, 0.7, 2200);   // kurzes "Ooohh"
       } else {
         goals++;
         goalsEl.textContent = goals + "/" + NEEDED;
         resultText = "TOOOR! ⚽🎉";
+        playSfx(sndGoal, 0.9, 5000);   // Torjubel
       }
       msgEl.textContent = resultText;
       state = "result";
@@ -296,6 +312,7 @@ window.Games.penalty = {
       canvas.removeEventListener("pointerdown", down);
       canvas.removeEventListener("pointermove", move);
       canvas.removeEventListener("pointerup", up);
+      try { sndAmbient.pause(); sndAmbient.src = ""; sndGoal.pause(); sndSave.pause(); } catch (e) {}
     };
   },
 };
