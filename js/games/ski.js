@@ -12,8 +12,8 @@ window.Games.ski = {
 
   mount: function (root, onWin) {
     const W = 360, H = 600;
-    const GOAL_DIST = 7000;     // zurückzulegende Strecke
-    const TOTAL_M = 800;        // Anzeige in "Metern"
+    const GOAL_DIST = 10500;    // zurückzulegende Strecke (50% länger)
+    const TOTAL_M = 1200;       // Anzeige in "Metern"
     const SKIER_Y = 470;
     const SIGN_TEXTS = ["Rinneralm", "Enzian", "Rinderexpress", "Ratschings", "Rinderalm 2 km"];
 
