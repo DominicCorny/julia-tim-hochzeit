@@ -117,7 +117,7 @@ window.Games.ski = {
       obstacles.length = 0; signs.length = 0;
       drawHut();
       cancelAnimationFrame(raf);
-      setTimeout(onWin, 800);
+      setTimeout(onWin, 5000); // Alm-Nachricht mind. 5 s lesbar lassen
     }
 
     // --- Zeichnen ---

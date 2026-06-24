@@ -11,7 +11,7 @@ window.Games.penalty = {
 
   mount: function (root, onWin) {
     const W = 360, H = 600;
-    const GOAL = { left: 80, right: 280, top: 70, line: 150 };
+    const GOAL = { left: 80, right: 280, top: 120, line: 200 };
     const SPOT = { x: 180, y: 470 };
     const NEEDED = 3;
 
@@ -169,12 +169,9 @@ window.Games.penalty = {
 
       // Ziel-Pfeil beim Wischen
       if (aim) {
-        ctx.strokeStyle = "rgba(176,48,82,0.85)";
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(SPOT.x, SPOT.y);
-        ctx.lineTo(SPOT.x + (aim.cx - aim.sx) * 1.5, SPOT.y + (aim.cy - aim.sy) * 1.5);
-        ctx.stroke();
+        const ex = SPOT.x + (aim.cx - aim.sx) * 1.5;
+        const ey = SPOT.y + (aim.cy - aim.sy) * 1.5;
+        if (Math.hypot(ex - SPOT.x, ey - SPOT.y) > 10) drawArrow(SPOT.x, SPOT.y, ex, ey);
       }
 
       // Ball
@@ -214,6 +211,21 @@ window.Games.penalty = {
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
       ctx.fillStyle = "#222";
       ctx.beginPath(); ctx.arc(x, y, r * 0.32, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    function drawArrow(x1, y1, x2, y2) {
+      const ang = Math.atan2(y2 - y1, x2 - x1);
+      const head = 17;
+      ctx.save();
+      ctx.strokeStyle = "rgba(176,48,82,0.9)";
+      ctx.fillStyle = "rgba(176,48,82,0.9)";
+      ctx.lineWidth = 5; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - head * Math.cos(ang - Math.PI / 6), y2 - head * Math.sin(ang - Math.PI / 6));
+      ctx.lineTo(x2 - head * Math.cos(ang + Math.PI / 6), y2 - head * Math.sin(ang + Math.PI / 6));
+      ctx.closePath(); ctx.fill();
       ctx.restore();
     }
     function uiFont() { return "-apple-system, Segoe UI, Roboto, sans-serif"; }
