@@ -25,6 +25,11 @@ window.Games.polter = {
     let count = 0, spawnTimer = 0;
     let raf = null, last = 0, finished = false;
 
+    // Porzellan-Bruch-Sound (Mixkit); Klon pro Treffer -> mehrere Schläge überlappen
+    const breakSnd = new Audio("assets/audio/porzellan-bruch.mp3");
+    breakSnd.preload = "auto";
+    function playBreak() { try { const a = breakSnd.cloneNode(); a.volume = 0.55; const p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+
     function spawn() {
       const golden = Math.random() < 0.12;
       dishes.push({
@@ -41,6 +46,7 @@ window.Games.polter = {
     }
 
     function smash(d) {
+      playBreak();
       count = Math.min(NEEDED, count + d.points);
       countEl.textContent = count + "/" + NEEDED;
       const cols = d.golden ? ["#e8c14a", "#f6e08a", "#fff4c2"] : ["#dfe6ee", "#b9c4d0", "#ffffff", "#cdd6e0"];

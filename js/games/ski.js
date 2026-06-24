@@ -46,13 +46,17 @@ window.Games.ski = {
     const skierImg = new Image(); let skierReady = false;
     skierImg.onload = function () { skierReady = true; };
     skierImg.src = "assets/Bilder/skier.png";
+    // Hintergrundmusik: Wolfgang Ambros – Schifoan
+    const skiMusic = new Audio("assets/audio/schifoan.mp3");
+    skiMusic.loop = true; skiMusic.volume = 0.5; skiMusic.preload = "auto";
+    function startMusic() { try { const p = skiMusic.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
 
     for (let i = 0; i < 40; i++) dots.push({ x: Math.random() * W, y: Math.random() * H, s: 0.5 + Math.random() });
 
     // --- Steuerung ---
     let dragging = false;
     function setTarget(e) { const p = window.JT.pos(canvas, e); skier.target = Math.max(22, Math.min(W - 22, p.x)); }
-    function down(e) { e.preventDefault(); if (!started) { started = true; return; } dragging = true; setTarget(e); }
+    function down(e) { e.preventDefault(); if (!started) { started = true; startMusic(); return; } dragging = true; setTarget(e); }
     function move(e) { if (dragging) { setTarget(e); e.preventDefault(); } }
     function upx() { dragging = false; }
     canvas.addEventListener("pointerdown", down);
@@ -348,6 +352,7 @@ window.Games.ski = {
       canvas.removeEventListener("pointermove", move);
       canvas.removeEventListener("pointerup", upx);
       canvas.removeEventListener("pointercancel", upx);
+      try { skiMusic.pause(); skiMusic.src = ""; } catch (e) {}
     };
   },
 };
