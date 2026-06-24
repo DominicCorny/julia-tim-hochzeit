@@ -253,12 +253,16 @@ window.Games.rhythm = {
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
 
       if (phase === "idle") {
-        ctx.font = "64px sans-serif"; ctx.fillText("🎵", 180, 250);
+        ctx.font = "60px sans-serif"; ctx.fillText("🎵", 180, 222);
         ctx.font = "700 22px -apple-system, Segoe UI, Roboto, sans-serif";
-        ctx.fillStyle = "#ffe08a"; ctx.fillText("Tippen zum Starten", 180, 320);
+        ctx.fillStyle = "#ffe08a"; ctx.fillText("Tippen zum Starten", 180, 292);
         ctx.font = "15px -apple-system, Segoe UI, Roboto, sans-serif";
         ctx.fillStyle = "rgba(255,255,255,0.7)";
-        ctx.fillText(audio ? "(euer Song – das ganze Lied!)" : "(Testmodus: Klick-Track)", 180, 350);
+        ctx.fillText(audio ? "(euer Song – das ganze Lied!)" : "(Testmodus: Klick-Track)", 180, 322);
+        // Hinweis: Ton einschalten (am Handy oft stumm)
+        ctx.font = "700 18px -apple-system, Segoe UI, Roboto, sans-serif";
+        ctx.fillStyle = "#ffd54a";
+        ctx.fillText("🔊 Ton am Handy einschalten!", 180, 374);
         return;
       }
       if (phase === "analyzing") {
