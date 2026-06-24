@@ -30,7 +30,7 @@ window.Games.polter = {
     // Klon pro Treffer, damit schnelle Schläge überlappen können.
     const breakSnds = [
       new Audio("assets/audio/porzellan-bruch.mp3"),
-      new Audio("assets/audio/porzellan-bruch-2.mp3"),
+      new Audio("assets/audio/porzellan-bruch-2.wav"),
     ];
     breakSnds.forEach(function (s) { s.preload = "auto"; });
     function playBreak() {
