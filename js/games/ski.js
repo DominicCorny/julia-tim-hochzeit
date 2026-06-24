@@ -43,6 +43,9 @@ window.Games.ski = {
     const huetteImg = new Image(); let huetteReady = false;
     huetteImg.onload = function () { huetteReady = true; };
     huetteImg.src = "assets/Bilder/huette.jpg";
+    const skierImg = new Image(); let skierReady = false;
+    skierImg.onload = function () { skierReady = true; };
+    skierImg.src = "assets/Bilder/skier.png";
 
     for (let i = 0; i < 40; i++) dots.push({ x: Math.random() * W, y: Math.random() * H, s: 0.5 + Math.random() });
 
@@ -182,8 +185,13 @@ window.Games.ski = {
       });
 
       if (invuln <= 0 || Math.floor(invuln * 12) % 2 === 0) {
-        ctx.font = "36px sans-serif";
-        ctx.fillText("⛷️", skier.x, SKIER_Y);
+        if (skierReady) {
+          const sw = 92, sh = sw * skierImg.height / skierImg.width;
+          ctx.drawImage(skierImg, skier.x - sw / 2, SKIER_Y - sh / 2, sw, sh);
+        } else {
+          ctx.font = "36px sans-serif";
+          ctx.fillText("⛷️", skier.x, SKIER_Y);
+        }
       }
 
       if (flash) {

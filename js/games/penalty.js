@@ -43,6 +43,15 @@ window.Games.penalty = {
     keeperImg.onload = function () { keeperReady = true; };
     keeperImg.src = "assets/Bilder/keeper.png";
 
+    // Tim als Schütze (Comic, transparent)
+    const timImg = new Image();
+    let timReady = false;
+    timImg.onload = function () { timReady = true; };
+    timImg.src = "assets/Bilder/tim.png";
+    const TIM_IDLE_X = 96, TIM_FEET_Y = 492, RUNUP_DUR = 0.45;
+    let tim = { x: TIM_IDLE_X };
+    let pendingToX = 180, runup = null;
+
     const inGoalRange = x => Math.max(GOAL.left + 12, Math.min(GOAL.right - 12, x));
 
     // --- Eingabe (Wischen) ---
@@ -69,9 +78,14 @@ window.Games.penalty = {
       e.preventDefault();
     }
     function shoot(dx) {
-      const toX = inGoalRange(SPOT.x + dx * 1.5);
+      // Erst läuft Tim von links zum Ball, dann fliegt der Ball (siehe 'runup')
+      pendingToX = inGoalRange(SPOT.x + dx * 1.5);
+      runup = { t: 0 };
+      state = "runup";
+    }
+    function launchFlight() {
       keeper.dive = GOAL.left + 22 + Math.random() * (GOAL.right - GOAL.left - 44);
-      flight = { t: 0, dur: 0.55, fromX: ball.x, fromY: ball.y, toX: toX, kFrom: keeper.x, kTo: keeper.dive };
+      flight = { t: 0, dur: 0.55, fromX: ball.x, fromY: ball.y, toX: pendingToX, kFrom: keeper.x, kTo: keeper.dive };
       state = "flying";
     }
 
@@ -86,6 +100,14 @@ window.Games.penalty = {
         keeper.x += keeper.dir * 60 * dt;
         if (keeper.x > GOAL.right - keeper.w / 2) { keeper.x = GOAL.right - keeper.w / 2; keeper.dir = -1; }
         if (keeper.x < GOAL.left + keeper.w / 2) { keeper.x = GOAL.left + keeper.w / 2; keeper.dir = 1; }
+      } else if (state === "runup") {
+        // Torfrau wackelt weiter, Tim läuft von links auf den Ball zu
+        keeper.x += keeper.dir * 60 * dt;
+        if (keeper.x > GOAL.right - keeper.w / 2) { keeper.x = GOAL.right - keeper.w / 2; keeper.dir = -1; }
+        if (keeper.x < GOAL.left + keeper.w / 2) { keeper.x = GOAL.left + keeper.w / 2; keeper.dir = 1; }
+        runup.t += dt / RUNUP_DUR;
+        tim.x = TIM_IDLE_X + (SPOT.x - TIM_IDLE_X) * Math.min(1, runup.t);
+        if (runup.t >= 1) launchFlight(); // Tim über dem Ball -> Schuss
       } else if (state === "flying") {
         flight.t += dt / flight.dur;
         const t = Math.min(1, flight.t);
@@ -119,6 +141,7 @@ window.Games.penalty = {
     function resetBall() {
       ball = { x: SPOT.x, y: SPOT.y, r: 15 };
       keeper.x = 180; keeper.dir = 1;
+      tim.x = TIM_IDLE_X; runup = null;
       resultText = ""; msgEl.innerHTML = "&nbsp;";
       state = "aim";
     }
@@ -183,6 +206,9 @@ window.Games.penalty = {
       // Ball
       drawBall(ball.x, ball.y, ball.r);
 
+      // Tim (Schütze) – über dem Ball, wenn er angelaufen ist
+      drawTim(tim.x);
+
       // Ergebnis-Text groß
       if (state === "result" && resultText) {
         ctx.font = "700 30px " + uiFont();
@@ -190,6 +216,14 @@ window.Games.penalty = {
         ctx.textAlign = "center";
         ctx.fillText(resultText, 180, 300);
       }
+    }
+    function drawTim(x) {
+      if (!timReady) return;
+      const h = 128, w = h * timImg.width / timImg.height;
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,0.30)"; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+      ctx.drawImage(timImg, x - w / 2, TIM_FEET_Y - h, w, h);
+      ctx.restore();
     }
     function drawKeeper(x, y) {
       if (keeperReady) {
