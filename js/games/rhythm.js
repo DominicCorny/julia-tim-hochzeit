@@ -30,9 +30,8 @@ const RHYTHM_CONFIG = {
 window.Games = window.Games || {};
 window.Games.rhythm = {
   emoji: "🎵",
-  name: "Sterntreffer",
-  blurb: "Bonus: Trefft die Kreise im Takt eures Songs! ⭐",
-  bonus: true,
+  name: "High School Musical DS",
+  blurb: "Trefft die Kreise im Takt zu eurem Song! ⭐",
 
   mount: function (root, onWin) {
     const W = 360, H = 600;

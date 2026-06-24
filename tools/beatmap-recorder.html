@@ -42,9 +42,10 @@
     <p class="lead">Song laden, abspielen und im Takt mittippen. Am Ende die Beatmap kopieren und in <code>js/games/rhythm.js</code> einsetzen.</p>
 
     <div class="card">
-      <label>1. Song laden (mp3 / m4a / wav)</label>
-      <input type="file" id="file" accept="audio/*" />
+      <label>1. Song (bereits geladen)</label>
       <audio id="audio" controls></audio>
+      <div class="hint">Es ist automatisch <code>assets/audio/song.mp3</code> geladen.
+        Anderen Song nur bei Bedarf: <input type="file" id="file" accept="audio/*" style="font-size:0.85rem" /></div>
     </div>
 
     <div class="card">
@@ -83,8 +84,10 @@
   </div>
 
   <script>
+    const SONG_SRC = "../assets/audio/song.mp3"; // einziger Song – vorab geladen
     const fileEl = document.getElementById("file");
     const audio = document.getElementById("audio");
+    audio.src = SONG_SRC;
     const tapBtn = document.getElementById("tap");
     const countEl = document.getElementById("count");
     const bpmEl = document.getElementById("bpm");

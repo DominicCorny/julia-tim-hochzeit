@@ -9,10 +9,10 @@
 const CRYPTEX_CODE = "1234";
 
 /* Reihenfolge der Spiele = Zuordnung zu den Code-Stellen (0..3) */
-const GAME_ORDER = ["penalty", "ski", "cooking", "polter"];
+const GAME_ORDER = ["penalty", "ski", "rhythm", "polter"];
 
 /* Bonus-Spiele: erscheinen im Hub, zählen aber KEINE Code-Ziffer */
-const BONUS_GAMES = ["rhythm"];
+const BONUS_GAMES = [];
 
 /* ================================================================
    Ab hier muss nichts mehr angepasst werden.

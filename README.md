@@ -11,16 +11,11 @@ Abhängigkeiten. Reine HTML/CSS/JS-Dateien, direkt auf GitHub Pages lauffähig.
 ## Die vier Spiele (je 1 Ziffer)
 1. **Elfmeter-Held** ⚽ – Tim am Ball, 3 Tore gegen Torfrau Julia (wischen).
 2. **Pisten-Slalom** 🎿 – Ski-Tag in Ratschings bis zur Rinderalm (Finger ziehen).
-3. **Julias Küche** 🍳 – 3 perfekte Pfannen, im grünen Bereich wenden (Timing-Tap).
+3. **High School Musical DS** 🎵⭐ – Kreise im Takt zum Song treffen (orange → grün → antippen);
+   das ganze Lied durchspielen, Sieg bei 80 % Trefferquote. Song-Einrichtung siehe Abschnitt 5.
 4. **Polterabend** 🍽️💥 – 20 Teller zerschlagen (antippen).
 
 Jeder Sieg schaltet eine Ziffer frei. Alle vier → vollständiger Code mit Konfetti.
-
-## Bonus-Spiel (ohne Ziffer)
-- **Sterntreffer** 🎵⭐ – Kreise im Takt eures Songs treffen (orange → grün → antippen).
-  Man spielt das **ganze Lied** durch und gewinnt mit **80 % Trefferquote**.
-  Reiner Spaß, unabhängig vom Code. Song-Einrichtung siehe Abschnitt 5.
-
 Alle Spiele sind über die Übersicht jederzeit wiederholbar; der Fortschritt wird im
 Browser (localStorage) gesichert.
 
@@ -105,7 +100,7 @@ QR-Code ausdrucken, ins Geschenk legen – fertig. 🎉
 
 ---
 
-## 5. Song für „Sterntreffer" einrichten 🎵
+## 5. Song für „High School Musical DS" einrichten 🎵
 
 Aktuell verdrahtet: `assets/audio/song.mp3`. Die Einstellungen stehen oben in
 `js/games/rhythm.js` in `RHYTHM_CONFIG`:
@@ -138,9 +133,8 @@ css/styles.css               gesamtes Styling (romantisches Theme)
 js/main.js                   Steuerung: Screens, Code-Logik, Fortschritt  ← CODE HIER SETZEN
 js/games/penalty.js          Spiel 1 · Elfmeter-Held
 js/games/ski.js              Spiel 2 · Pisten-Slalom (Ratschings)
-js/games/cooking.js          Spiel 3 · Julias Küche
+js/games/rhythm.js           Spiel 3 · High School Musical DS  ← SONG + BEATMAP HIER SETZEN
 js/games/polter.js           Spiel 4 · Polterabend
-js/games/rhythm.js           Bonus · Sterntreffer  ← SONG + BEATMAP HIER SETZEN
 tools/beatmap-recorder.html  Hilfstool: Beatmap zum Song aufnehmen
 assets/audio/                hier die Song-mp3 ablegen
 ```
