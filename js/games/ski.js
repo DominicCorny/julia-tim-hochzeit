@@ -62,8 +62,10 @@ window.Games.ski = {
 
     function updateLives() { livesEl.textContent = "❤️".repeat(lives) + "🤍".repeat(Math.max(0, 3 - lives)); }
 
+    let outro = null; // Ende-Sequenz {sub, clearDist, t, hutY, v0, hold}
     function update(dt) {
       if (!started) return;       // wartet auf Tap im Start-Screen
+      if (outro) { updateOutro(dt); return; } // sanfter Auslauf zum Ziel
       const frac = traveled / GOAL_DIST;
       speed = 200 + frac * 170;
       traveled += speed * dt;
@@ -117,12 +119,43 @@ window.Games.ski = {
       }
 
       metersEl.textContent = Math.max(0, Math.round((1 - traveled / GOAL_DIST) * TOTAL_M)) + " m";
-      if (traveled >= GOAL_DIST && !won) win();
+      if (traveled >= GOAL_DIST && !outro) startOutro();
     }
 
     function softReset() {
       traveled = 0; lives = 3; invuln = 1.4; updateLives();
       obstacles.length = 0; flash = "Hoppla – nochmal!";
+    }
+
+    // --- Sanfter Auslauf zum Ziel (kein abruptes Ende) ---
+    function startOutro() {
+      outro = { sub: "clear", clearDist: 0, t: 0, hutY: -60, v0: speed, hold: 0 };
+      signs.length = 0; flash = "";
+      metersEl.textContent = "0 m";
+    }
+    function moveWorld(dt, sp) {
+      liftOffset = (liftOffset + sp * dt * 0.6) % 130;
+      dots.forEach(d => { d.y += sp * dt * d.s * 0.5; if (d.y > H) { d.y = -4; d.x = Math.random() * W; } });
+      for (let i = obstacles.length - 1; i >= 0; i--) { obstacles[i].y += sp * dt; if (obstacles[i].y > H + 40) obstacles.splice(i, 1); }
+    }
+    function updateOutro(dt) {
+      skier.x += (180 - skier.x) * Math.min(1, dt * 4); // sanft zur Mitte
+      const v0 = outro.v0;
+      if (outro.sub === "clear") {
+        moveWorld(dt, v0);                            // erst freie Piste (keine neuen Bäume)
+        outro.clearDist += v0 * dt;
+        if (outro.clearDist >= 300) { outro.sub = "approach"; outro.t = 0; outro.hutY = -60; }
+      } else if (outro.sub === "approach") {
+        outro.t += dt;
+        const dur = 2.6, p = Math.min(1, outro.t / dur);
+        const e = 1 - Math.pow(1 - p, 3);             // easeOut: gleitet aus
+        outro.hutY = -60 + (330 - (-60)) * e;         // Hütte kommt entgegen
+        moveWorld(dt, v0 * (1 - p) * (1 - p));         // Welt bremst sanft bis Stillstand
+        if (p >= 1) { outro.sub = "hold"; outro.hold = 0; }
+      } else {
+        outro.hold += dt;                              // kurz stehen bleiben ...
+        if (outro.hold >= 1.2) win();                  // ... dann Rinderalm-Foto
+      }
     }
     function win() {
       won = true; finished = true;
@@ -183,6 +216,12 @@ window.Games.ski = {
         if (o.type === "bombardino") drawBombardino(o.x, o.y);
         else { ctx.font = "34px sans-serif"; ctx.fillText("🌲", o.x, o.y); }
       });
+
+      // Ziel-Hütte kommt im Auslauf entgegen
+      if (outro && outro.hutY > -55) {
+        ctx.font = "62px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("🛖", 180, outro.hutY);
+      }
 
       if (invuln <= 0 || Math.floor(invuln * 12) % 2 === 0) {
         if (skierReady) {
