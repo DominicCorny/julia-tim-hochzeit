@@ -25,10 +25,22 @@ window.Games.polter = {
     let count = 0, spawnTimer = 0;
     let raf = null, last = 0, finished = false;
 
-    // Porzellan-Bruch-Sound (Mixkit); Klon pro Treffer -> mehrere Schläge überlappen
-    const breakSnd = new Audio("assets/audio/porzellan-bruch.mp3");
-    breakSnd.preload = "auto";
-    function playBreak() { try { const a = breakSnd.cloneNode(); a.volume = 0.55; const p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    // Bruch-Sounds: zwei verschiedene Klänge, pro Treffer zufällig + leichte
+    // Tonhöhen-/Lautstärke-Variation -> klingt jedes Mal etwas anders (natürlich).
+    // Klon pro Treffer, damit schnelle Schläge überlappen können.
+    const breakSnds = [
+      new Audio("assets/audio/porzellan-bruch.mp3"),
+      new Audio("assets/audio/porzellan-bruch-2.mp3"),
+    ];
+    breakSnds.forEach(function (s) { s.preload = "auto"; });
+    function playBreak() {
+      try {
+        const a = breakSnds[Math.random() < 0.5 ? 0 : 1].cloneNode();
+        a.volume = 0.5 + Math.random() * 0.12;
+        a.playbackRate = 0.9 + Math.random() * 0.25;
+        const p = a.play(); if (p && p.catch) p.catch(function () {});
+      } catch (e) {}
+    }
 
     function spawn() {
       const golden = Math.random() < 0.12;
