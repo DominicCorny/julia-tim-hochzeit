@@ -17,8 +17,24 @@ const RHYTHM_CONFIG = {
   songSrc: "assets/audio/song.mp3",  // leer = Testmodus
   songStart: 10,          // Song ab dieser Sekunde starten (stilles Intro)
   winRatio: 0.8,          // 80 % Treffer = gewonnen
-  beatStride: 2,          // nur jeden N-ten erkannten Beat nehmen (2 = halbe Tap-Dichte)
-  beatmap: [],            // aus tools/beatmap-recorder.html (überschreibt Auto-Erkennung)
+  beatStride: 2,          // nur jeden N-ten erkannten Beat (gilt für Auto-Erkennung; NICHT für die feste beatmap unten)
+  // Feste Beatmap (einmal vorab automatisch erkannt) -> kein Laden/Analysieren beim Start,
+  // das Spiel startet sofort. Leeren ([]) für Live-Auto-Erkennung, oder mit dem
+  // tools/beatmap-recorder.html neu aufnehmen und hier einsetzen.
+  beatmap: [
+    10.31, 11.61, 12.47, 13.75, 15.35, 16.3, 17.18, 18.04, 18.9, 19.78,
+    21.46, 22.31, 23.22, 24.45, 25.31, 26.61, 27.89, 28.75, 29.61, 30.46,
+    31.32, 32.6, 33.46, 34.32, 35.18, 36.04, 37.01, 38.17, 39.03, 39.89,
+    40.75, 41.59, 42.72, 43.75, 44.61, 45.46, 46.32, 47.18, 48.04, 49.16,
+    50.18, 51.04, 51.9, 52.73, 53.59, 54.45, 55.31, 56.61, 58.75, 59.61,
+    60.46, 61.74, 62.6, 63.46, 64.32, 65.18, 66.04, 66.9, 67.76, 68.61,
+    69.87, 70.75, 71.89, 72.89, 73.75, 74.61, 75.46, 76.58, 77.6, 78.88,
+    80.02, 81.59, 83.43, 84.45, 85.31, 86.17, 87.03, 87.89, 88.75, 89.61,
+    90.46, 91.3, 92.44, 93.46, 94.32, 95.18, 96.04, 96.9, 97.78, 99.89,
+    100.73, 101.61, 102.49, 103.75, 104.61, 105.91, 107.6, 108.46, 109.32, 110.16,
+    111.08, 112.31, 113.17, 114.03, 114.89, 115.75, 116.61, 117.47, 118.31, 119.19,
+    120.02, 120.91, 121.74, 122.86, 123.88
+  ],
   testBpm: 110,           // nur Testmodus
   startOffset: 1.4,       // 1. Beat im Testmodus
   testBeats: 40,          // Anzahl Kreise im Testmodus
@@ -104,7 +120,10 @@ window.Games.rhythm = {
       circles = []; stars = [];
       hitsEl.textContent = "0";
       if (audio) {
-        try { audio.currentTime = C.songStart; audio.play().catch(function () {}); } catch (e) {}
+        const seekTo = C.songStart || 0;
+        const begin = function () { try { if (seekTo > 0) audio.currentTime = seekTo; } catch (e) {} audio.play().catch(function () {}); };
+        if (audio.readyState >= 1) begin();                                  // Metadaten schon da -> sofort
+        else audio.addEventListener("loadedmetadata", begin, { once: true }); // sonst warten, dann seeken
       } else {
         try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
       }
