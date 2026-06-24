@@ -6,7 +6,7 @@
    Reihenfolge: 1. Ziffer = Elfmeter, 2. = Ski, 3. = Kochen, 4. = Polterabend
    (entspricht der Reihenfolge unten in GAME_ORDER).
    ================================================================ */
-const CRYPTEX_CODE = "1234";
+const CRYPTEX_CODE = "2211";
 
 /* Reihenfolge der Spiele = Zuordnung zu den Code-Stellen (0..3) */
 const GAME_ORDER = ["penalty", "ski", "rhythm", "polter"];
