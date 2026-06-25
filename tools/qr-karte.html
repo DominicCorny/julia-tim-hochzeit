@@ -20,26 +20,26 @@
     body{ font-family:var(--font-serif); color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .sheet{ width:210mm; height:297mm; position:relative; background:#fff; margin:0 auto; }
     /* obere Hälfte = sichtbare Vorderseite nach dem Falten */
-    .half{ position:absolute; top:0; left:0; width:210mm; height:148.5mm; display:flex; align-items:center; justify-content:center; padding:6mm 10mm; }
+    .half{ position:absolute; top:0; left:0; width:210mm; height:148.5mm; display:flex; align-items:flex-start; justify-content:center; padding:6mm 10mm 0; }
     .foldline{ position:absolute; top:148.5mm; left:12mm; right:12mm; border-top:1.1px dashed #c9b277; }
     .foldtxt{ position:absolute; top:147mm; left:0; right:0; text-align:center; }
     .foldtxt span{ background:#fff; padding:0 6px; font-family:var(--font-ui); font-size:8.5px; letter-spacing:1.5px; color:#b9a067; }
 
     .card{ width:165mm; text-align:center; }
     .deco{ color:var(--gold); font-size:15px; margin-bottom:1mm; }
-    .names{ font-family:var(--font-script); color:var(--rose); font-size:42px; line-height:1; margin:0 0 1.5mm; }
+    .names{ font-family:var(--font-script); color:var(--rose); font-size:38px; line-height:1; margin:0 0 1mm; }
     .names .amp{ color:var(--gold); font-size:.8em; }
-    .sub{ font-family:var(--font-serif); font-weight:600; color:var(--rose-dark); font-size:16px; letter-spacing:.5px; margin:0 0 3mm; }
-    .emojis{ font-size:19px; letter-spacing:5px; margin:0 0 3.5mm; }
-    .msg{ font-size:14px; line-height:1.5; margin:0 auto 2mm; max-width:120mm; }
+    .sub{ font-family:var(--font-serif); font-weight:600; color:var(--rose-dark); font-size:15px; letter-spacing:.5px; margin:0 0 2mm; }
+    .emojis{ font-size:18px; letter-spacing:5px; margin:0 0 2.5mm; }
+    .msg{ font-size:12.5px; line-height:1.4; margin:0 auto 1.5mm; max-width:118mm; }
     .msg b{ color:var(--rose-dark); }
-    .tip{ font-family:var(--font-ui); font-size:11.5px; color:var(--rose); margin:0 auto 4mm; max-width:120mm; }
-    .qr{ width:48mm; height:48mm; margin:0 auto; background:#fff; border:1.5px solid #e2cf93; border-radius:8px; padding:3.5mm; }
+    .tip{ font-family:var(--font-ui); font-size:11px; color:var(--rose); margin:0 auto 2.5mm; max-width:118mm; }
+    .qr{ width:37mm; height:37mm; margin:0 auto; background:#fff; border:1.5px solid #e2cf93; border-radius:8px; padding:2.5mm; }
     .qr svg{ display:block; width:100%; height:100%; }
-    .scan{ font-family:var(--font-ui); font-weight:600; font-size:12px; color:var(--rose); margin:3mm 0 .5mm; }
+    .scan{ font-family:var(--font-ui); font-weight:600; font-size:12px; color:var(--rose); margin:2.5mm 0 .5mm; }
     .url{ font-family:var(--font-ui); font-size:9px; color:#8a7a7e; margin:0 0 .5mm; }
-    .ton{ font-family:var(--font-ui); font-weight:700; font-size:10.5px; color:var(--gold); margin:.5mm 0 3.5mm; }
-    .divider{ width:55mm; height:1px; margin:0 auto 3mm; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
+    .ton{ font-family:var(--font-ui); font-weight:700; font-size:10.5px; color:var(--gold); margin:.5mm 0 2.5mm; }
+    .divider{ width:55mm; height:1px; margin:0 auto 2.5mm; background:linear-gradient(90deg,transparent,var(--gold),transparent); }
     .from{ font-family:var(--font-script); color:var(--rose-dark); font-size:21px; }
     .from small{ display:block; font-family:var(--font-serif); font-size:11.5px; color:#8a7a7e; letter-spacing:.5px; margin-top:.5mm; }
   </style>
@@ -69,7 +69,7 @@
         <p class="url">dominiccorny.github.io/julia-tim-hochzeit</p>
         <p class="ton">🔊 Ton am Handy einschalten!</p>
         <div class="divider"></div>
-        <div class="from">Von Dominic &amp; Papa Wilfried<small>❤️ mit Liebe für euch ❤️</small></div>
+        <div class="from">Von Dominic &amp; Wilfried<small>❤️ mit Liebe für euch ❤️</small></div>
       </div>
     </div>
     <div class="foldline"></div>
